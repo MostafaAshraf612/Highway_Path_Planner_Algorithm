@@ -5,8 +5,10 @@ This repository contains a path planner algorithm developed as part of the Udaci
 
 ## Project Demo  
 
-
-https://github.com/user-attachments/assets/0010789b-f6c7-47ee-899d-367f57f7bf4f
+<video width="600" controls>
+  <source src="https://github.com/user-attachments/assets/0010789b-f6c7-47ee-899d-367f57f7bf4f" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 
 [Watch the full working demo video here](https://your-video-link)  
