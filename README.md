@@ -8,7 +8,7 @@ This repository contains a path planner algorithm developed as part of the Udaci
 https://github.com/user-attachments/assets/0010789b-f6c7-47ee-899d-367f57f7bf4f
 
 
-[Watch the full working demo video here](https://your-video-link)  
+[Watch the full working demo video here](https://drive.google.com/file/d/1B3jG_mBzdoHw_HwY-1dph1Qs24xOCvsB/view)  
 
 *The demo video showcases the vehicle navigating the highway with lane keeping, lane changing, and adaptive speed control.*
 
