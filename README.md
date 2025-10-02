@@ -1,82 +1,81 @@
-## C++ cubic spline interpolation
+# Highway Path Planner - Udacity Self-Driving Car Nanodegree v1.0
 
-![cubic C2 spline](https://kluge.in-chemnitz.de/opensource/spline/cubic_c2_spline_git.png)
+## Project Overview  
+This repository contains a path planner algorithm developed as part of the Udacity Self-Driving Car Nanodegree program (version 1.0). The primary objective of this project is to generate a smooth and safe trajectory for an autonomous vehicle traveling on a highway. The path is represented as a series of waypoints that the vehicle must follow, taking into account other traffic and lane constraints.
 
-This is a lightweight implementation of **cubic splines**
-to interpolate points f(x<sub>i</sub>) = y<sub>i</sub> with
-the following features.
+## Project Demo  
 
-* available spline types:
-  * **cubic C<sup>2</sup> splines**: global, twice continuously differentiable 
-  * **cubic Hermite splines**: local, continuously differentiable (C<sup>1</sup>)
-* boundary conditions: **first** and **second order** derivatives can be specified, **not-a-knot** condition, periodic condition is not implemented
-* extrapolation
-  * linear: if first order derivatives are specified or 2nd order = 0
-  * quadratic: if 2nd order derivatives not equal to zero specified
-* monotonicity can be enforced (when input is monotonic as well)
 
-### Usage
-The library is a header-only file with no external dependencies and can
-be used like this:
+https://github.com/user-attachments/assets/0010789b-f6c7-47ee-899d-367f57f7bf4f
 
-```C++
-#include <vector>
-#include "spline.h"
-...
-    std::vector<double> X, Y;
-    ...
-    // default cubic spline (C^2) with natural boundary conditions (f''=0)
-    tk::spline s(X,Y);			// X needs to be strictly increasing
-    double value=s(1.3);		// interpolated value at 1.3
-    double deriv=s.deriv(1,1.3);	// 1st order derivative at 1.3
-    std::vector<double> solutions = s.solve(0.0);	// solves s(x)=0.0
-    ...
+
+[Watch the full working demo video here](https://your-video-link)  
+
+*The demo video showcases the vehicle navigating the highway with lane keeping, lane changing, and adaptive speed control.*
+
+## Features
+- Generates smooth trajectories using spline interpolation.
+- Considers vehicle localization, previous path points, and sensor fusion data to detect nearby vehicles.
+- Implements lane keeping and safe lane change maneuvers.
+- Maintains velocity control to comply with speed limits and adjust speed based on traffic.
+- Integrates with Udacity’s self-driving car simulator for real-time path planning.
+
+## General Code Flow
+
+1. **Initialization**: The program loads the highway map waypoints from a CSV file, including coordinates and directional vectors for all lanes.
+
+2. **WebSocket Communication**: Establishes connection with the Udacity simulator to receive telemetry and sensor fusion data and send trajectory points.
+
+3. **Telemetry Data Processing**: Receives the current vehicle position, orientation, speed, and the unconsumed previous path points.
+
+4. **Sensor Fusion Analysis**: Processes data about all other vehicles on the road to assess their speed and position relative to the ego vehicle in real-time.
+
+5. **Decision Making**:  
+   - If the vehicle ahead is too close, the planner evaluates whether a lane change is safe and beneficial by checking adjacent lanes for gaps ahead and behind.  
+   - If lane change is unsafe, the vehicle slows down accordingly.  
+   - If no obstacle is close, the vehicle accelerates to the target speed (close to speed limit).  
+
+6. **Path Generation Using Splines**:  
+   - Using a combination of previous path points and new waypoints spaced ahead on the highway, the planner fits a spline curve to create a smooth trajectory.  
+   - Points are generated along this spline spaced to maintain the target speed, then transformed back to global coordinates.
+
+7. **Trajectory Output**: The planned points are sent to the simulator which controls the autonomous vehicle to follow the planned path smoothly.
+
+## Project Structure
+- **main.cpp**: Main driver code implementing the complete path planning workflow.  
+- **helpers.h / helpers.cpp**: Utility functions for coordinate transforms and waypoint manipulation.  
+- **spline.h**: tk spline library used for smooth path generation.  
+- **data/highway_map.csv**: Predefined highway waypoints.  
+- **polynomial_solver.h**: Polynomial helper functions (optional).
+
+## Getting Started
+
+### Prerequisites  
+- Linux or Windows machine with C++11 or later compiler  
+- uWebSockets library for WebSocket communication  
+- Eigen3 library for linear algebra computations  
+- Udacity Self-Driving Car Simulator  
+
+### Installation and Build  
+1. Clone the repository  
+2. Ensure all dependencies are installed, including uWebSockets and Eigen3  
+3. Build the project using your preferred C++ build system (e.g., CMake or Makefiles)  
+4. Run the executable, which listens for connections from the Udacity Simulator
+
+### Running the Project  
+1. Launch the Udacity Self-Driving Car Simulator and select the highway map  
+2. Run the path planner executable  
+3. The vehicle autonomously drives on the highway following the generated waypoints
+
+## Contributing  
+Contributions and improvements are welcome. Please submit pull requests with clear explanations and ensure code comments maintain clarity and consistency.
+
+## References  
+- Udacity Self-Driving Car Nanodegree Program: Path Planning Project  
+- uWebSockets documentation  
+- Eigen Library  
+- Spline Library  
+
+## License  
+MIT License.
 ```
-
-The constructor can take more arguments to define the spline, e.g.:
-```C++
-    // cubic Hermite splines (C^1) with enforced monotonicity and
-    // left curvature equal to 0.0 and right slope equal 1.0
-    tk::spline s(X,Y,tk::spline::cspline_hermite, true,
-                 tk::spline::second_deriv, 0.0,
-                 tk::spline::first_deriv, 1.0);
-```
-This is identical to (must be called in that order):
-```C++
-    tk::spline s;
-    s.set_boundary(tk::spline::second_deriv, 0.0,
-                   tk::spline::first_deriv, 1.0);
-    s.set_points(X,Y);
-    s.make_monotonic();
-```
-
-
-### Spline types
-Splines are piecewise polynomial functions to interpolate points
-(x<sub>i</sub>, y<sub>i</sub>). In particular, cubic splines can
-be represented as
-* f(x) = a<sub>i</sub> + b<sub>i</sub> (x-x<sub>i</sub>) + c<sub>i</sub> (x-x<sub>i</sub>)<sup>2</sup> + d<sub>i</sub> (x-x<sub>i</sub>)<sup>3</sup>, for all x in [x<sub>i</sub>,  x<sub>i+1</sub>)
-* f(x<sub>i</sub>)=y<sub>i</sub>
-
-The following splines are available.
-
-* `tk::spline::cspline`: cubic C<sup>2</sup> spline
-  * twice continuously differentiable, e.g. f'(x<sub>i</sub>) and f''(x<sub>i</sub>) exist
-  * this, together with boundary conditions uniquely determines the spline
-  * requires solving a sparse equation system
-  * is a global spline in the sense that changing an input point will impact the spline everywhere
-  * setting first order derivatives at the boundary will break C<sup>2</sup> at the boundary
-* `tk::spline::cspline_hermite`: cubic Hermite spline
-  * once continuously differentiable (C<sup>1</sup>)
-  * first order derivatives are specified by finite differences, e.g. on a uniform x-grid:
-    * f'(x<sub>i</sub>) = (y<sub>i+1</sub>-y<sub>i-1</sub>)/(x<sub>i+1</sub>-x<sub>i-1</sub>)
-  * is a local spline in the sense that changing grid points will only affect the spline around that grid point in a few adjacent segments
-
-A function to enforce monotonicity is available as well:
-* `tk::spline::make_monotonic()`: will make the spline monotonic if input grid points are monotonic
-  * this function can only be called after `set_points(...)` has been called
-  * it will break C<sup>2</sup> if the original spline was C<sup>2</sup> and not already monotonic
-  * it will break boundary conditions if it was not monotonic in the first or last segment
-
-### References
-https://kluge.in-chemnitz.de/opensource/spline/
