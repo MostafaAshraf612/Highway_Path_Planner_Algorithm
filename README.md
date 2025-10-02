@@ -4,8 +4,8 @@
 This repository contains a path planner algorithm developed as part of the Udacity Self-Driving Car Nanodegree program (version 1.0). The primary objective of this project is to generate a smooth and safe trajectory for an autonomous vehicle traveling on a highway. The path is represented as a series of waypoints that the vehicle must follow, taking into account other traffic and lane constraints.
 
 ## Project Demo  
-<video width="600" height="400" controls>
-  <source src="https://github.com/user-attachments/assets/0010789b-f6c7-47ee-899d-367f57f7bf4f" type="video/mp4">
+
+https://github.com/user-attachments/assets/0010789b-f6c7-47ee-899d-367f57f7bf4f
 
 
 [Watch the full working demo video here](https://your-video-link)  
