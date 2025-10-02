@@ -56,7 +56,7 @@ https://github.com/user-attachments/assets/0010789b-f6c7-47ee-899d-367f57f7bf4f
 - Udacity Self-Driving Car Simulator  
 
 ### Installation and Build  
-1. Clone the repository  
+1. Clone the repository  ```
 2. Ensure all dependencies are installed, including uWebSockets and Eigen3  
 3. Build the project using your preferred C++ build system (e.g., CMake or Makefiles)  
 4. Run the executable, which listens for connections from the Udacity Simulator
