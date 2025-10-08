@@ -6,9 +6,9 @@
 #include "spline-master/src/spline.h" // Include the spline header for smooth path generation
 #include "Eigen-3.3/Eigen/Core"
 #include "Eigen-3.3/Eigen/QR"
-#include "helpers.h" // Helper functions including coordinate transforms and utility math functions
+#include "include/helpers.h" // Helper functions including coordinate transforms and utility math functions
 #include "json.hpp"
-#include "polynomial_solver.h"
+#include "include/polynomial_solver.h"
 
 // For convenience
 using nlohmann::json;
@@ -353,3 +353,4 @@ int main() {
     // Enter the event loop to process incoming messages
     h.run();
 }
+
